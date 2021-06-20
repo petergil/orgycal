@@ -1,0 +1,21 @@
+#+TITLE: orgycal
+
+import ics calendars to org files.
+
+Currently this fulfills my minimal use-case but needs to be fixed to
+be generally useful.
+
+Usage: ~orgycal [-in infile] [-out outfile]~
+
+Where ~infile~ is an ics file and ~outfile~ is the name of the file to
+write to. Note that ~outfile~ will be overwritten!
+
+* TODO Things to fix
+
+  - better flag handling
+  - error handling
+  - test cases
+  - nicer way to filter extra info
+  - extract more metadata and map to org constructs
+  - represent org document as a data structure and not using
+    string-based handling (maybe look at [[https://github.com/niklasfasching/go-org][go-org]])
