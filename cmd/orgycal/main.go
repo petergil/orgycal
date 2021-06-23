@@ -19,8 +19,6 @@ const (
 )
 
 func main() {
-	//log.SetLevel(log.WarnLevel)
-	log.SetLevel(log.DebugLevel)
 	//log.SetReportCaller(true)
 	log.SetFormatter(&log.TextFormatter{
 		//DisableColors: true,
@@ -28,10 +26,17 @@ func main() {
 		PadLevelText:  true,
 	})
 
+	debug := flag.Bool("debug", false, "enable debug mode")
 	inFile := flag.String("in", "cal.ics", "file to read")
 	outFile := flag.String("out", "cal.org", "file to write")
 
 	flag.Parse()
+
+	if *debug {
+		log.SetLevel(log.DebugLevel)
+		log.Debug("Setting log level to debug")
+	}
+
 	// flag.PrintDefaults()
 	cal := getCal(*inFile)
 
