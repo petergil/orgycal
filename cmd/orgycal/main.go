@@ -3,14 +3,15 @@ package main
 import (
 	"bytes"
 	"flag"
-	"fmt"
-	"github.com/apognu/gocal"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/apognu/gocal"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -18,6 +19,14 @@ const (
 )
 
 func main() {
+	//log.SetLevel(log.WarnLevel)
+	log.SetLevel(log.DebugLevel)
+	//log.SetReportCaller(true)
+	log.SetFormatter(&log.TextFormatter{
+		//DisableColors: true,
+		FullTimestamp: true,
+		PadLevelText:  true,
+	})
 
 	inFile := flag.String("in", "cal.ics", "file to read")
 	outFile := flag.String("out", "cal.org", "file to write")
@@ -35,9 +44,16 @@ func main() {
 
 }
 
-func getCal(path string) *gocal.Gocal {
-	f, err := os.Open(path)
+func getCal(file string) *gocal.Gocal {
+	log.WithFields(log.Fields{
+		"file": file,
+	}).Debug("Opening calendar file")
+	f, err := os.Open(file)
 	if err != nil {
+		log.WithFields(log.Fields{
+			"file":  file,
+			"error": err,
+		}).Error("Error reading file")
 		panic(err)
 	}
 	defer f.Close()
@@ -52,8 +68,15 @@ func getCal(path string) *gocal.Gocal {
 }
 
 func writeOrg(entries string, file string) {
+	log.WithFields(log.Fields{
+		"file": file,
+	}).Debug("Opening org file for writing")
 	err := ioutil.WriteFile(file, []byte(entries), 0644)
 	if err != nil {
+		log.WithFields(log.Fields{
+			"file":  file,
+			"error": err,
+		}).Error("Error writing file")
 		panic(err)
 	}
 }
@@ -75,7 +98,11 @@ Location: {{ .Location }}{{- end }}
 
 `)
 	if err != nil {
-		fmt.Printf("something happened: %s\n", err)
+		log.WithFields(log.Fields{
+			"entry": event.Summary,
+			"error": err,
+		}).Error("Unable to apply template")
+		panic(err)
 	}
 
 	var entry bytes.Buffer
