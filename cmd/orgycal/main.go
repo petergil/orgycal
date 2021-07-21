@@ -117,19 +117,23 @@ Location: {{ .Location }}{{- end }}
 
 func filterDesc(description string) string {
 
-	// Microsoft teams meeting boilerplate
-	teams, _ := regexp.Compile("_{10,}\\\\n.+<(https://teams.microsoft.com/l/meetup-join/[^ ]+%7d)>.+_{10,}(\\\\n)+")
-	// Warnings about external sender
-	external, _ := regexp.Compile("EXTERNAL SENDER. Do not click links or open attachments unless you recognize the sender and know the content is safe. DO NOT provide your username or password.\\\\n\\\\n\\\\n")
-	// surrounding newlines
-	edges, _ := regexp.Compile("(^\\\\n+)|(\\\\n+$)")
-	// Consolidate multiple newlines
-	newlines, _ := regexp.Compile("(\\\\n)+")
+	descriptionFilters := [][]string{
+		// Microsoft teams boilerplate
+		{"_{10,}\\\\n.+<(https://teams.microsoft.com/l/meetup-join/[^ ]+%7d)>.+_{10,}(\\\\n)+", "$1"},
+		// Outlook warning about external sender
+		{"EXTERNAL SENDER. Do not click links or open attachments unless you recognize the sender and know the content is safe. DO NOT provide your username or password.\\\\n\\\\n\\\\n", ""},
+		// surrounding newlines
+		{"(^\\\\n+)|(\\\\n+$)", ""},
+		// Consolidate multiple newlines
+		{"(\\\\n)+", "\n"},
+	}
 
-	desc := teams.ReplaceAll([]byte(description), []byte("$1"))
-	desc = external.ReplaceAll(desc, []byte(""))
-	desc = edges.ReplaceAll(desc, []byte(""))
-	desc = newlines.ReplaceAll(desc, []byte("\n"))
+	desc := []byte(description)
+
+	for _, pattern := range descriptionFilters {
+		regex, _ := regexp.Compile(pattern[0])
+		desc = regex.ReplaceAll(desc, []byte(pattern[1]))
+	}
 
 	return string(desc)
 }
