@@ -140,13 +140,28 @@ func filterDesc(description string) string {
 
 func getTags(event gocal.Event) string {
 	tags := []string{}
-	teams, _ := regexp.MatchString("Microsoft Teams Meeting", event.Location)
-	if teams {
-		tags = append(tags, "@teams")
+
+	locationTags := [][]string{
+		{"Microsoft Teams Meeting", "@teams"},
+		{"https://.+zoom.us/.+", "@zoom"},
 	}
-	zoom, _ := regexp.MatchString("https://.+zoom.us/.+", event.Location)
-	if zoom {
-		tags = append(tags, "@zoom")
+
+	descriptionTags := [][]string{
+		{"https://teams.microsoft.com/l/meetup-join/", "@teams"},
+	}
+
+	for _, pattern := range locationTags {
+		tagMatch, _ := regexp.MatchString(pattern[0], event.Location)
+		if tagMatch {
+			tags = append(tags, pattern[1])
+		}
+	}
+
+	for _, pattern := range descriptionTags {
+		tagMatch, _ := regexp.MatchString(pattern[0], event.Description)
+		if tagMatch {
+			tags = append(tags, pattern[1])
+		}
 	}
 
 	tagString := strings.Join(tags[:], ":")
