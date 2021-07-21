@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 	"text/template"
 	"time"
@@ -164,6 +165,7 @@ func getTags(event gocal.Event) string {
 		}
 	}
 
+	sort.Strings(tags)
 	tagString := strings.Join(tags[:], ":")
 	if tagString != "" {
 		tagString = ":" + tagString + ":"
