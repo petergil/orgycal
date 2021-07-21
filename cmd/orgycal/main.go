@@ -152,14 +152,14 @@ func getTags(event gocal.Event) string {
 
 	for _, pattern := range locationTags {
 		tagMatch, _ := regexp.MatchString(pattern[0], event.Location)
-		if tagMatch {
+		if tagMatch && !contains(tags, pattern[1]) {
 			tags = append(tags, pattern[1])
 		}
 	}
 
 	for _, pattern := range descriptionTags {
 		tagMatch, _ := regexp.MatchString(pattern[0], event.Description)
-		if tagMatch {
+		if tagMatch && !contains(tags, pattern[1]) {
 			tags = append(tags, pattern[1])
 		}
 	}
@@ -169,6 +169,15 @@ func getTags(event gocal.Event) string {
 		tagString = ":" + tagString + ":"
 	}
 	return tagString
+}
+
+func contains(list []string, value string) bool {
+	for _, ii := range list {
+		if ii == value {
+			return true
+		}
+	}
+	return false
 }
 
 func orgTimeStamp(t *time.Time, active bool) string {
