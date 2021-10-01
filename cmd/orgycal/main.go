@@ -59,8 +59,7 @@ func getCal(file string) *gocal.Gocal {
 		log.WithFields(log.Fields{
 			"file":  file,
 			"error": err,
-		}).Error("Error reading file")
-		panic(err)
+		}).Fatal("Error reading file")
 	}
 	defer f.Close()
 
@@ -82,8 +81,7 @@ func writeOrg(entries string, file string) {
 		log.WithFields(log.Fields{
 			"file":  file,
 			"error": err,
-		}).Error("Error writing file")
-		panic(err)
+		}).Fatal("Error writing file")
 	}
 }
 
@@ -107,8 +105,7 @@ Location: {{ .Location }}{{- end }}
 		log.WithFields(log.Fields{
 			"entry": event.Summary,
 			"error": err,
-		}).Error("Unable to apply template")
-		panic(err)
+		}).Fatal("Unable to parse template") // TODO: should this be fatal or not?
 	}
 
 	var entry bytes.Buffer
