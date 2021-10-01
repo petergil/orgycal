@@ -67,7 +67,11 @@ func getCal(file string) *gocal.Gocal {
 
 	c := gocal.NewParser(f)
 	c.Start, c.End = &start, &end
-	c.Parse()
+	if err := c.Parse(); err != nil{
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Fatal("Unable to parse input file")
+	}
 
 	return c
 }
@@ -109,7 +113,11 @@ Location: {{ .Location }}{{- end }}
 	}
 
 	var entry bytes.Buffer
-	t.Execute(&entry, event)
+	if err := t.Execute(&entry, event); err != nil {
+		log.WithFields(log.Fields{
+		}).Fatal("Unable to apply entry")
+	}
+
 	return entry.String()
 }
 
