@@ -19,6 +19,10 @@ const (
 	orgTimestampFormat = "2006-01-02 Mon 15:04"
 )
 
+type OrgMeta struct {
+	FileTags string
+}
+
 func main() {
 	//log.SetReportCaller(true)
 	log.SetFormatter(&log.TextFormatter{
@@ -30,7 +34,7 @@ func main() {
 	debug := flag.Bool("debug", false, "enable debug mode")
 	inFile := flag.String("in", "cal.ics", "file to read")
 	outFile := flag.String("out", "cal.org", "file to write")
-
+	tags := flag.String("tags",":orgycal:", "add the following filetags to the generated file (:-separated list)")
 	flag.Parse()
 
 	if *debug {
@@ -46,7 +50,10 @@ func main() {
 		events = append(events, orgEntry(e))
 	}
 
-	writeOrg(strings.Join(events[:], ""), *outFile)
+	meta := OrgMeta{ FileTags: *tags,}
+
+	contents := orgHeader(meta) + strings.Join(events[:], "")
+	writeOrg(contents, *outFile)
 
 }
 
@@ -87,6 +94,26 @@ func writeOrg(entries string, file string) {
 			"error": err,
 		}).Fatal("Error writing file")
 	}
+}
+
+func orgHeader(meta OrgMeta) string {
+	h, _ := template.New("orgheader").Parse(`
+#+FILETAGS: {{ .FileTags}}
+
+`)
+
+	var header bytes.Buffer
+	if err := h.Execute(&header, meta); err != nil {
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Fatal("Unable to apply header")
+	}
+	log.WithFields(log.Fields{
+		"meta": meta,
+	}).Debug("Formatted header")
+
+	return header.String()
+
 }
 
 func orgEntry(event gocal.Event) string {
