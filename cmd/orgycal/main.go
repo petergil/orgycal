@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"regexp"
@@ -33,7 +34,7 @@ func main() {
 
 	debug := flag.Bool("debug", false, "enable debug mode")
 	inFile := flag.String("in", "cal.ics", "file to read")
-	outFile := flag.String("out", "cal.org", "file to write")
+	outFile := flag.String("out", "cal.org", "file to write ('-' means stdout)")
 	tags := flag.String("tags",":orgycal:", "add the following filetags to the generated file (:-separated list)")
 	flag.Parse()
 
@@ -53,8 +54,12 @@ func main() {
 	meta := OrgMeta{ FileTags: *tags,}
 
 	contents := orgHeader(meta) + strings.Join(events[:], "")
-	writeOrg(contents, *outFile)
 
+	if *outFile == "-" {
+		fmt.Println(contents)
+	} else {
+		writeOrg(contents, *outFile)
+	}
 }
 
 func getCal(file string) *gocal.Gocal {
