@@ -147,8 +147,13 @@ Location: {{ .Location }}{{- end }}
 	var entry bytes.Buffer
 	if err := t.Execute(&entry, event); err != nil {
 		log.WithFields(log.Fields{
+			"error": err,
 		}).Fatal("Unable to apply entry")
 	}
+	log.WithFields(log.Fields{
+		"entrystart": event.Start,
+		"entry":      event.Summary,
+	}).Debug("Formatted entry")
 
 	return entry.String()
 }
