@@ -23,7 +23,6 @@ type OrgMeta struct {
 	FileTags string
 }
 
-
 var tz *time.Location = time.Local
 
 func main() {
@@ -37,8 +36,8 @@ func main() {
 	debug := flag.Bool("debug", false, "enable debug mode")
 	inFile := flag.String("in", "cal.ics", "file to read")
 	outFile := flag.String("out", "cal.org", "file to write ('-' means stdout)")
-	tags := flag.String("tags",":orgycal:", "add the following filetags to the generated file (:-separated list)")
-	timezone := flag.String("timezone","local", "which timezone to output timestamps in ('local' tries to extract the current user timezone)")
+	tags := flag.String("tags", ":orgycal:", "add the following filetags to the generated file (:-separated list)")
+	timezone := flag.String("timezone", "local", "which timezone to output timestamps in ('local' tries to extract the current user timezone)")
 	flag.Parse()
 
 	if *debug {
@@ -47,17 +46,17 @@ func main() {
 	}
 
 	log.WithFields(log.Fields{
-		"timezone":  *timezone,}).Debug("Setting timezone to")
+		"timezone": *timezone}).Debug("Setting timezone to")
 	if *timezone != "local" {
 		var err error
 		tz, err = time.LoadLocation(*timezone)
 		if err != nil {
 			log.WithFields(log.Fields{
-				"timezone":  *timezone,
-				"error": err,
+				"timezone": *timezone,
+				"error":    err,
 			}).Fatal("Unable to load timezone")
 		}
-	}	
+	}
 
 	// flag.PrintDefaults()
 	cal := getCal(*inFile)
@@ -67,7 +66,7 @@ func main() {
 		events = append(events, orgEntry(e))
 	}
 
-	meta := OrgMeta{ FileTags: *tags,}
+	meta := OrgMeta{FileTags: *tags}
 
 	contents := orgHeader(meta) + strings.Join(events[:], "")
 
@@ -95,7 +94,7 @@ func getCal(file string) *gocal.Gocal {
 
 	c := gocal.NewParser(f)
 	c.Start, c.End = &start, &end
-	if err := c.Parse(); err != nil{
+	if err := c.Parse(); err != nil {
 		log.WithFields(log.Fields{
 			"error": err,
 		}).Fatal("Unable to parse input file")
