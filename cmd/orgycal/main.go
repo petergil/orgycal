@@ -163,6 +163,8 @@ func filterDesc(description string) string {
 	descriptionFilters := [][]string{
 		// Microsoft teams boilerplate
 		{"_{10,}\\\\n.+<(https://teams.microsoft.com/l/meetup-join/[^ ]+%7d)>.+_{10,}(\\\\n)+", "$1"},
+		// Google meet boilerplate
+		{"^.+ Google Meet: (https://meet.google.com/[a-z-]+)\\\\n.+https://support.google.com/a/users/answer/9282720", "$1"},
 		// Outlook warning about external sender
 		{"EXTERNAL SENDER. Do not click links or open attachments unless you recognize the sender and know the content is safe. DO NOT provide your username or password.\\\\n\\\\n\\\\n", ""},
 		// surrounding newlines
@@ -187,10 +189,12 @@ func getTags(event gocal.Event) string {
 	locationTags := [][]string{
 		{"Microsoft Teams Meeting", "@teams"},
 		{"https://.+zoom.us/.+", "@zoom"},
+		{"https://meet.google.com/[a-z-]+", "@meet"},
 	}
 
 	descriptionTags := [][]string{
 		{"https://teams.microsoft.com/l/meetup-join/", "@teams"},
+		{"https://meet.google.com/[a-z-]+", "@meet"},
 	}
 
 	for _, pattern := range locationTags {
