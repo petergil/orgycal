@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"sort"
@@ -109,7 +108,7 @@ func writeOrg(entries string, file string) {
 	log.WithFields(log.Fields{
 		"file": file,
 	}).Debug("Opening org file for writing")
-	err := ioutil.WriteFile(file, []byte(entries), 0644)
+	err := os.WriteFile(file, []byte(entries), 0644)
 	if err != nil {
 		log.WithFields(log.Fields{
 			"file":  file,
