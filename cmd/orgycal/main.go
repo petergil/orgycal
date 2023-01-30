@@ -24,6 +24,9 @@ type OrgMeta struct {
 	FileTags string
 }
 
+
+var tz *time.Location = time.Local
+
 func main() {
 	//log.SetReportCaller(true)
 	log.SetFormatter(&log.TextFormatter{
@@ -36,12 +39,26 @@ func main() {
 	inFile := flag.String("in", "cal.ics", "file to read")
 	outFile := flag.String("out", "cal.org", "file to write ('-' means stdout)")
 	tags := flag.String("tags",":orgycal:", "add the following filetags to the generated file (:-separated list)")
+	timezone := flag.String("timezone","local", "which timezone to output timestamps in ('local' tries to extract the current user timezone)")
 	flag.Parse()
 
 	if *debug {
 		log.SetLevel(log.DebugLevel)
 		log.Debug("Setting log level to debug")
 	}
+
+	log.WithFields(log.Fields{
+		"timezone":  *timezone,}).Debug("Setting timezone to")
+	if *timezone != "local" {
+		var err error
+		tz, err = time.LoadLocation(*timezone)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"timezone":  *timezone,
+				"error": err,
+			}).Fatal("Unable to load timezone")
+		}
+	}	
 
 	// flag.PrintDefaults()
 	cal := getCal(*inFile)
@@ -235,7 +252,8 @@ func orgTimeStamp(t *time.Time, active bool) string {
 		openchar = "<"
 		closechar = ">"
 	}
-	return openchar + t.Format(orgTimestampFormat) + closechar
+
+	return openchar + t.In(tz).Format(orgTimestampFormat) + closechar
 }
 
 func orgTimeRange(start *time.Time, end *time.Time, active bool) string {
