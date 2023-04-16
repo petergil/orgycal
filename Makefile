@@ -1,7 +1,7 @@
 
 DOCKER=podman
 GOLANGCI_IMAGE=golangci/golangci-lint
-GOLANGCI_TAG=v1.50.1
+GOLANGCI_TAG=v1.52.2
 
 # root directory for project
 root_dir := $(dir $(abspath $(MAKEFILE_LIST)))
