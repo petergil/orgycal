@@ -32,6 +32,9 @@ var partStatusMap = map[string]string{
 	"NEEDS-ACTION": "⏳", // Waiting for reply
 }
 
+// fallback if we don't have the participation status available
+const fallbackPartStatus = "❔"
+
 var tz *time.Location = time.Local
 
 func main() {
@@ -149,7 +152,7 @@ func orgHeader(meta OrgMeta) string {
 func orgAttendeeStatus(status string) string {
 	ret := partStatusMap[status]
 	if ret == "" {
-		ret = "❔"
+		ret = fallbackPartStatus
 	}
 	return ret
 }
