@@ -167,7 +167,7 @@ func orgAttendee(attendee gocal.Attendee) string {
 }
 
 func orgAttendees(attendees []gocal.Attendee) string {
-	ret := "Attendees: "
+	ret := "Attendees:"
 
 	keys := make([]string, 0, len(attendees))
 	att := map[string]string{}

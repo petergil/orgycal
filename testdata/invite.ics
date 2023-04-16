@@ -1,0 +1,29 @@
+BEGIN:VEVENT
+DTSTART:20230130T093000Z
+DTEND:20230130T103000Z
+DTSTAMP:20230130T121116Z
+ORGANIZER;CN=organizer@example.com:mailto:organizer@example.com
+UID:467rf756d81g3qfb6pfbpmcpff@google.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;CN=accept
+ or@example.com;X-NUM-GUESTS=0:mailto:acceptor@example.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;CN=no
+ -action@example.com;X-NUM-GUESTS=0:mailto:no-action@example.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=DECLINED;CN=declin
+ er@example.com;X-NUM-GUESTS=0:mailto:decliner@example.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=DELEGATED;CN=deleg
+ ator@example.com;X-NUM-GUESTS=0:mailto:delegator@example.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=not-defined;CN=un
+ defined@example.com;X-NUM-GUESTS=0:mailto:undefined@example.com
+X-GOOGLE-CONFERENCE:https://meet.google.com/asd-fghj-klz
+CREATED:20230129T210137Z
+DESCRIPTION:Gå med via Google Meet: https://meet.google.com/asd-fghj-klz\nE
+ ller ring: (SE) +46 8 505 447 38 PIN-kod: 412982325#\nFler telefonnummer: h
+ ttps://tel.meet/asd-fghj-klz?pin=6121631484235&hs=7\n\nLäs mer om Meet på h
+ ttps://support.google.com/a/users/answer/9282720
+LAST-MODIFIED:20230130T070745Z
+LOCATION:
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:test invite
+TRANSP:OPAQUE
+END:VEVENT
