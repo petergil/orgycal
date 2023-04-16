@@ -6,13 +6,18 @@ GOLANGCI_TAG=v1.52.2
 # root directory for project
 root_dir := $(dir $(abspath $(MAKEFILE_LIST)))
 
-.PHONY: lint test testlocal
+run_in_container := ${DOCKER} run --rm -v ${root_dir}:/app -w /app ${GOLANGCI_IMAGE}:${GOLANGCI_TAG}
+
+.PHONY: lint lintlocal test testlocal
 
 lint:
-	@${DOCKER} run --rm -v ${root_dir}:/app -w /app ${GOLANGCI_IMAGE}:${GOLANGCI_TAG} golangci-lint run
+	@${run_in_container} make lintlocal
+
+lintlocal:
+	@golangci-lint run
 
 test:
-	@${DOCKER} run --rm -v ${root_dir}:/app -w /app ${GOLANGCI_IMAGE}:${GOLANGCI_TAG} make testlocal
+	@${run_in_container} make testlocal
 
 testlocal:
 	@go test -coverprofile=coverage.out
