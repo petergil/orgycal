@@ -73,14 +73,7 @@ func main() {
 	// flag.PrintDefaults()
 	cal := getCal(*inFile)
 
-	events := []string{}
-	for _, e := range cal.Events {
-		events = append(events, orgEntry(e))
-	}
-
-	meta := OrgMeta{FileTags: *tags}
-
-	contents := orgHeader(meta) + strings.Join(events[:], "")
+	contents := orgFormat(cal, *tags)
 
 	if *outFile == "-" {
 		fmt.Println(contents)
@@ -128,6 +121,18 @@ func writeOrg(entries string, file string) {
 	}
 }
 
+func orgFormat(cal *gocal.Gocal, tags string) string {
+	events := []string{}
+	for _, e := range cal.Events {
+		events = append(events, orgEntry(e))
+	}
+
+	meta := OrgMeta{FileTags: tags}
+
+	contents := orgHeader(meta) + strings.Join(events[:], "")
+
+	return contents
+}
 func orgHeader(meta OrgMeta) string {
 	h, _ := template.New("orgheader").Parse(`
 #+FILETAGS: {{ .FileTags}}
