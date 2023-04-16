@@ -23,6 +23,15 @@ type OrgMeta struct {
 	FileTags string
 }
 
+// rfc5545 section-3.2.12 partstat-event to emojis
+var partStatusMap = map[string]string{
+	"ACCEPTED":     "✅",
+	"DECLINED":     "❌",
+	"TENTATIVE":    "❓",
+	"DELEGATED":    "⏩",
+	"NEEDS-ACTION": "⏳", // Waiting for reply
+}
+
 var tz *time.Location = time.Local
 
 func main() {
@@ -136,18 +145,51 @@ func orgHeader(meta OrgMeta) string {
 
 }
 
+// map participation status to string representation
+func orgAttendeeStatus(status string) string {
+	ret := partStatusMap[status]
+	if ret == "" {
+		ret = "❔"
+	}
+	return ret
+}
+
+func orgAttendee(attendee gocal.Attendee) string {
+	return "  - " + orgAttendeeStatus(attendee.Status) + " " + attendee.Cn
+}
+
+func orgAttendees(attendees []gocal.Attendee) string {
+	ret := "Attendees: "
+
+	keys := make([]string, 0, len(attendees))
+	att := map[string]string{}
+	for _, a := range attendees {
+		att[a.Cn] = orgAttendee(a)
+		keys = append(keys, a.Cn)
+	}
+	sort.Strings(keys)
+	for _, a := range keys {
+		ret += "\n  " + att[a]
+	}
+
+	return ret
+}
+
 func orgEntry(event gocal.Event) string {
 	t, err := template.New("orgpost").Funcs(
 		template.FuncMap{
-			"filterDesc": filterDesc,
-			"getTags":    getTags,
+			"filterDesc":      filterDesc,
+			"formatAttendees": orgAttendees,
+			"getTags":         getTags,
 			//"orgTimeStamp": orgTimeStamp,
 			"orgTimeRange": orgTimeRange,
 		},
 	).Parse(`* {{.Summary}}       {{ getTags . }}
 {{- if .Location }}
 Location: {{ .Location }}{{- end }}
-{{ orgTimeRange .Start .End  true }}
+{{ orgTimeRange .Start .End  true }}{{- if .Attendees}}
+
+{{formatAttendees .Attendees }}{{- end }}
 
 {{filterDesc  .Description }}
 
