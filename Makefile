@@ -8,13 +8,15 @@ root_dir := $(dir $(abspath $(MAKEFILE_LIST)))
 
 run_in_container := ${DOCKER} run --rm -v ${root_dir}:/app -w /app ${GOLANGCI_IMAGE}:${GOLANGCI_TAG}
 
-.PHONY: build buildlocal lint lintlocal test testlocal
+.PHONY: build buildlocal check lint lintlocal test testlocal
 
 build:
 	@${run_in_container} make buildlocal
 
 buildlocal:
 	@go build .
+
+check: test lint
 
 lint:
 	@${run_in_container} make lintlocal
