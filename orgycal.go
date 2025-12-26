@@ -93,7 +93,17 @@ func getCal(file string) *gocal.Gocal {
 			"error": err,
 		}).Fatal("Error reading file")
 	}
-	defer f.Close()
+
+	defer func() {
+		closeErr := f.Close()
+		if closeErr != nil {
+			err = closeErr
+			log.WithFields(log.Fields{
+				"file": file,
+				"error": err,
+			}).Fatal("Unable to close input file")
+		}
+	}()
 
 	start, end := time.Now().AddDate(0, -6, -1), time.Now().AddDate(1, 1, 0)
 
@@ -176,6 +186,7 @@ func orgAttendees(attendees []gocal.Attendee) string {
 		keys = append(keys, a.Cn)
 	}
 	sort.Strings(keys)
+
 	for _, a := range keys {
 		ret += "\n  " + att[a]
 	}
@@ -202,6 +213,7 @@ Location: {{ .Location }}{{- end }}
 {{filterDesc  .Description }}
 
 `)
+
 	if err != nil {
 		log.WithFields(log.Fields{
 			"entry": event.Summary,
