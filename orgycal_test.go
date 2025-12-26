@@ -42,7 +42,7 @@ const inviteResult = `
 #+FILETAGS: :foo:bar:
 
 * test invite       :@meet:
-<2023-01-30 Mon 09:30>--<2023-01-30 Mon 10:30>
+<2026-01-30 Fri 09:30>--<2026-01-30 Fri 10:30>
 
 Attendees:
     - ✅ acceptor@example.com
