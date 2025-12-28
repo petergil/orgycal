@@ -1,6 +1,6 @@
 
 DOCKER=podman
-GOLANGCI_IMAGE=golangci/golangci-lint
+GOLANGCI_IMAGE=docker.io/golangci/golangci-lint
 GOLANGCI_TAG=v2.7.2
 
 # root directory for project
