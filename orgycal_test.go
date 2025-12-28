@@ -42,7 +42,7 @@ const inviteResult = `
 #+FILETAGS: :foo:bar:
 
 * test invite       :@meet:
-<2026-01-30 Fri 09:30>--<2026-01-30 Fri 10:30>
+<2023-01-30 Mon 09:30>--<2023-01-30 Mon 10:30>
 
 Attendees:
     - ✅ acceptor@example.com
@@ -60,7 +60,10 @@ func TestFull(t *testing.T) {
 	// Set local timezone to UTC to work with
 	tz = time.UTC
 
-	cal := getCal(inviteFile)
+	ts, _ := time.Parse(time.RFC3339, "2023-01-01T00:00:01.1Z")
+	te, _ := time.Parse(time.RFC3339, "2024-01-30T00:00:01.1Z")
+
+	cal := getCal(inviteFile, ts, te)
 
 	contents := orgFormat(cal, fileTags)
 

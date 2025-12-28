@@ -71,7 +71,8 @@ func main() {
 	}
 
 	// flag.PrintDefaults()
-	cal := getCal(*inFile)
+	start, end := time.Now().AddDate(0, -6, -1), time.Now().AddDate(1, 1, 0)
+	cal := getCal(*inFile, start, end)
 
 	contents := orgFormat(cal, *tags)
 
@@ -82,7 +83,7 @@ func main() {
 	}
 }
 
-func getCal(file string) *gocal.Gocal {
+func getCal(file string, start time.Time, end time.Time) *gocal.Gocal {
 	log.WithFields(log.Fields{
 		"file": file,
 	}).Debug("Opening calendar file")
@@ -99,13 +100,11 @@ func getCal(file string) *gocal.Gocal {
 		if closeErr != nil {
 			err = closeErr
 			log.WithFields(log.Fields{
-				"file": file,
+				"file":  file,
 				"error": err,
 			}).Fatal("Unable to close input file")
 		}
 	}()
-
-	start, end := time.Now().AddDate(0, -6, -1), time.Now().AddDate(1, 1, 0)
 
 	c := gocal.NewParser(f)
 	c.Start, c.End = &start, &end
